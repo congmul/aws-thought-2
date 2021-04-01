@@ -3,14 +3,14 @@ const AWS = require("aws-sdk");
 // config points to local instance,
 // updates local environmental variables
 AWS.config.update({
-  region: "us-east-2",
+  region: "us-west-2",
   endpoint: "http://localhost:8000"
 });
 
 const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
 
 const params = {
-    TableName : "Thoughts",
+    TableName : "Thoughts-2",
     KeySchema: [       
         { AttributeName: "username", KeyType: "HASH"},  //Partition key
         { AttributeName: "createdAt", KeyType: "RANGE" }  //Sort key

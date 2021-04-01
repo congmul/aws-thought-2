@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const AWS = require("aws-sdk");
 const awsConfig = {
-  region: "us-east-2",
+  region: "us-west-2",
   endpoint: "http://localhost:8000",
 
 };
 AWS.config.update(awsConfig);
 const dynamodb = new AWS.DynamoDB.DocumentClient();
-const table = "Thoughts";
+const table = "Thoughts-2";
 
 // get all users' thoughts
 router.get('/users', (req, res) => {
@@ -29,7 +29,7 @@ router.get('/users/:username', (req, res) => {
   console.log(`Querying for thought(s) from ${req.params.username}.`);
   const params = {
     TableName: table,
-    KeyConditionExpression: "#un = :user",
+    KeyConditionExpression: "#un = :user", //specifies the search criteria.
     ExpressionAttributeNames: {
       "#un": "username",
       "#ca": "createdAt",
