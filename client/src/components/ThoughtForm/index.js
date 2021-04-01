@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+// We'll use the useRef Hook to retrieve the image file uploaded by the user, by accessing the <input type="file"> element.
 
 const ThoughtForm = () => {
   const [formState, setFormState] = useState({ username: '', thought: '' });
   const [characterCount, setCharacterCount] = useState(0);
+
+  const fileInput = useRef(null);
 
   // update state based on form input changes
   const handleChange = event => {
@@ -10,6 +13,34 @@ const ThoughtForm = () => {
       setFormState({ ...formState, [event.target.name]: event.target.value });
       setCharacterCount(event.target.value.length);
     }
+  };
+
+  const handleImageUpload = event => {
+    event.preventDefault();
+    //FormData makes it easy to construct a set of key-value pairs, mirroring the format of a form with the type set to "multipart/form-data".
+    const data = new FormData();
+    data.append('image', fileInput.current.files[0]);
+    console.log(data)
+
+    // send image file to endpoint with the postImage function
+    const postImage = async () => {
+      try {
+        const res = await fetch('/api/image-upload', {
+          mode: 'cors',
+          method: 'POST',
+          body: data
+        })
+        if (!res.ok) throw new Error(res.statusText);
+        const postResponse = await res.json();
+        // This new key-value pair is { image: postResponse.Location }, which is the public URL of the image.
+        setFormState({...formState, image: postResponse.Location})
+        
+        return postResponse.Location;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    postImage();
   };
 
   // submit form
@@ -58,6 +89,23 @@ const ThoughtForm = () => {
           className="form-input col-12 col-md-9"
           onChange={handleChange}
         ></textarea>
+
+        <label className="form-input col-12  p-1">
+          Add an image to your thought:
+        <input
+            type="file"
+            ref={fileInput}
+            className="form-input p-2"
+          />
+          <button
+            className="btn"
+            onClick={handleImageUpload} // This function will send the image to the image upload endpoint we created.
+            type="submit"
+          >
+            Upload
+        </button>
+        </label>
+
         <button className="btn col-12 col-md-3" type="submit">
           Submit
           </button>
