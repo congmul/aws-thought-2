@@ -6,7 +6,7 @@ import ThoughtList from '../components/ThoughtList';
 
 const AWS = require("aws-sdk");
 const awsConfig = {
-  region: "us-east-2",
+  region: "us-west-2",
   endpoint: "http://localhost:8000",
 };
 
@@ -27,6 +27,10 @@ const Profile = props => {
       const data = await res.json();
       // sort the array by createdAt property ordered by descending values
       // const orderData = data.sort((a, b) => (a.createdAt < b.createdAt) ? 1 : -1);
+  
+      data.forEach(thought => {
+        thought.username = userParam;
+      })
       console.log(data);
       setThoughts(data);
       setIsLoaded(true);
